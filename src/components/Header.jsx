@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 
-export default function Header() {
+export default function Header({ showInstall, onInstall }) {
   const [now, setNow] = useState(new Date())
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 60000)
-    return () => clearInterval(timer)
+    const t = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(t)
   }, [])
 
   const dateStr = now.toLocaleDateString('pt-BR', {
@@ -16,23 +16,21 @@ export default function Header() {
   return (
     <header className="app-header">
       <div className="header-brand">
-        <div className="logo-wrap">
-          <img
-            src="./logo.png"
-            alt="Logo"
-            className="logo-img"
-            onError={e => { e.currentTarget.style.display = 'none' }}
-          />
-          <div className="logo-icon-fallback">🥩</div>
-        </div>
         <div className="header-titles">
-          <h1 className="header-title">Casa de Carnes Dois Irmãos</h1>
+          <h1 className="header-title">Açougue Dois Irmãos</h1>
           <p className="header-subtitle">Fundada em 1983 · Controle de Entregas</p>
         </div>
       </div>
-      <div className="header-datetime">
-        <span className="header-date">{dateStr}</span>
-        <span className="header-time">{timeStr}</span>
+      <div className="header-right">
+        {showInstall && (
+          <button className="install-btn" onClick={onInstall} title="Instalar app no dispositivo">
+            📲 Instalar
+          </button>
+        )}
+        <div className="header-datetime">
+          <span className="header-date">{dateStr}</span>
+          <span className="header-time">{timeStr}</span>
+        </div>
       </div>
     </header>
   )
