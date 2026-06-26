@@ -16,17 +16,8 @@ export default function Header({ showInstall, onInstall }) {
   return (
     <header className="app-header">
       <div className="header-brand">
-        <div className="logo-wrap">
-          <img
-            src="./logo.png"
-            alt="Logo"
-            className="logo-img"
-            onError={e => { e.currentTarget.style.display = 'none' }}
-          />
-          <div className="logo-icon-fallback">🥩</div>
-        </div>
         <div className="header-titles">
-          <h1 className="header-title">Casa de Carnes Dois Irmãos</h1>
+          <h1 className="header-title">Açougue Dois Irmãos</h1>
           <p className="header-subtitle">Fundada em 1983 · Controle de Entregas</p>
         </div>
       </div>
