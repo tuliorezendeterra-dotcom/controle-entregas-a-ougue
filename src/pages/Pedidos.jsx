@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import OrderCard from '../components/OrderCard'
 import OrderModal from '../components/OrderModal'
 
-export default function Pedidos({ orders, onAdd, onToggle, onDelete }) {
+export default function Pedidos({ orders, clients = [], products = [], onAdd, onToggle, onDelete }) {
   const [showModal, setShowModal] = useState(false)
   const [statusFilter, setStatusFilter] = useState('all')
   const [dateFilter, setDateFilter] = useState('today')
@@ -16,15 +16,13 @@ export default function Pedidos({ orders, onAdd, onToggle, onDelete }) {
       .filter(o => statusFilter === 'all' || o.status === statusFilter)
       .filter(o => o.clientName.toLowerCase().includes(search.toLowerCase().trim()))
       .sort((a, b) => {
-        const dateCmp = b.callDate.localeCompare(a.callDate)
-        if (dateCmp !== 0) return dateCmp
-        return a.callTime.localeCompare(b.callTime)
+        const dc = b.callDate.localeCompare(a.callDate)
+        return dc !== 0 ? dc : a.callTime.localeCompare(b.callTime)
       })
   }, [orders, statusFilter, dateFilter, search, today])
 
-  const pendingCount = filtered.filter(o => o.status === 'pending').length
+  const pendingCount   = filtered.filter(o => o.status === 'pending').length
   const deliveredCount = filtered.filter(o => o.status === 'delivered').length
-
   const totalVal = filtered.reduce((s, o) => s + (o.totalValue || 0), 0)
   const BRL = v => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
@@ -50,30 +48,14 @@ export default function Pedidos({ orders, onAdd, onToggle, onDelete }) {
         <div className="toolbar-filters">
           <div className="filter-group">
             <span className="filter-label">Período:</span>
-            <button
-              className={`filter-chip ${dateFilter === 'today' ? 'active' : ''}`}
-              onClick={() => setDateFilter('today')}
-            >Hoje</button>
-            <button
-              className={`filter-chip ${dateFilter === 'all' ? 'active' : ''}`}
-              onClick={() => setDateFilter('all')}
-            >Todos</button>
+            <button className={`filter-chip ${dateFilter === 'today' ? 'active' : ''}`} onClick={() => setDateFilter('today')}>Hoje</button>
+            <button className={`filter-chip ${dateFilter === 'all'   ? 'active' : ''}`} onClick={() => setDateFilter('all')}>Todos</button>
           </div>
-
           <div className="filter-group">
             <span className="filter-label">Status:</span>
-            <button
-              className={`filter-chip ${statusFilter === 'all' ? 'active' : ''}`}
-              onClick={() => setStatusFilter('all')}
-            >Todos</button>
-            <button
-              className={`filter-chip pending-chip ${statusFilter === 'pending' ? 'active' : ''}`}
-              onClick={() => setStatusFilter('pending')}
-            >🔴 Pendentes</button>
-            <button
-              className={`filter-chip delivered-chip ${statusFilter === 'delivered' ? 'active' : ''}`}
-              onClick={() => setStatusFilter('delivered')}
-            >🟢 Entregues</button>
+            <button className={`filter-chip ${statusFilter === 'all'       ? 'active' : ''}`} onClick={() => setStatusFilter('all')}>Todos</button>
+            <button className={`filter-chip pending-chip   ${statusFilter === 'pending'   ? 'active' : ''}`} onClick={() => setStatusFilter('pending')}>🔴 Pendentes</button>
+            <button className={`filter-chip delivered-chip ${statusFilter === 'delivered' ? 'active' : ''}`} onClick={() => setStatusFilter('delivered')}>🟢 Entregues</button>
           </div>
         </div>
 
@@ -120,6 +102,8 @@ export default function Pedidos({ orders, onAdd, onToggle, onDelete }) {
 
       {showModal && (
         <OrderModal
+          clients={clients}
+          products={products}
           onClose={() => setShowModal(false)}
           onSave={order => { onAdd(order); setShowModal(false) }}
         />
